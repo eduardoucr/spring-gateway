@@ -1,16 +1,20 @@
 package com.demo.gateway.routes;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import reactor.core.publisher.Mono;
+
+import java.util.Objects;
 
 @Configuration
 public class RoutesConfig {
-    @Value("${uri.api.clientes}")
-    private String clientesUri;
+//    @Value("${uri.api.clientes}")
+//    private String clientesUri;
 
 //    @Bean
 //    public RouteLocator clientesRouteLocator(RouteLocatorBuilder builder){
@@ -34,5 +38,13 @@ public class RoutesConfig {
 //                .build();
 //    };
 
+    @Bean
+    public KeyResolver userKeyResolver(){
+        return exchange -> Mono.just(Objects.requireNonNull(
+                exchange.getRequest()
+                        .getRemoteAddress()
+                        .getAddress()
+                        .getHostAddress()));
+    }
 
 }
